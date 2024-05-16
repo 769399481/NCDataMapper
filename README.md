@@ -1,0 +1,2 @@
+# NCDataMapper
+ "NCDataMapper" is a Python application designed for exploring and visualizing geographical data stored in NetCDF files. With GeoPlotter, users can effortlessly upload NetCDF files, select parameters such as longitude, latitude, and data values, and generate interactive plots to visualize the spatial distribution of the data. The application offers features like zooming, panning, and saving images, providing users with the flexibility to analyze and interpret geographical datasets effectively. 
