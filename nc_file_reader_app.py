@@ -17,6 +17,7 @@ class NCFileReaderApp:
         self.parameters = []
         self.selected_parameters = {"lon": "", "lat": "", "value": ""}
         self.data = {}
+        self.colorbar = None  # Reference to the colorbar
 
         self.create_widgets()
 
@@ -54,6 +55,14 @@ class NCFileReaderApp:
         self.value_option_menu.config(width=15)
         self.value_option_menu.pack(anchor="w", padx=5, pady=(0, 10))
 
+        # Colorbar selection dropdown
+        colorbar_label = tk.Label(parameter_frame, text="Select Colorbar:", font=("Helvetica", 10), bg="#F0F8FF")
+        colorbar_label.pack(anchor="w", padx=5, pady=(10, 2))
+
+        self.colorbar_menu = tk.StringVar(value="Blues")
+        self.colorbar_option_menu = tk.OptionMenu(parameter_frame, self.colorbar_menu, "Blues", "Reds", "Greens", "Oranges", "Purples")
+        self.colorbar_option_menu.config(width=15)
+        self.colorbar_option_menu.pack(anchor="w", padx=5, pady=(0, 10))
 
         # Confirm parameter button
         confirm_params_button = tk.Button(parameter_frame, text="Generating", command=self.show_params, width=15, bg="#F0F8FF", font=("Helvetica", 10), relief="ridge")
@@ -128,9 +137,10 @@ class NCFileReaderApp:
         self.selected_parameters["lon"] = self.lon_menu.get()
         self.selected_parameters["lat"] = self.lat_menu.get()
         self.selected_parameters["value"] = self.value_menu.get()
+        self.selected_colorbar = self.colorbar_menu.get()
 
         # Display selected parameters
-        messagebox.showinfo("Selected Parameters", f"Lon: {self.selected_parameters['lon']}\nLat: {self.selected_parameters['lat']}\nValue: {self.selected_parameters['value']}")
+        messagebox.showinfo("Selected Parameters", f"Lon: {self.selected_parameters['lon']}\nLat: {self.selected_parameters['lat']}\nValue: {self.selected_parameters['value']}\nColorbar: {self.selected_colorbar}")
 
         # Plot data
         self.plot_data()
@@ -163,9 +173,11 @@ class NCFileReaderApp:
         self.ax.add_feature(cfeature.BORDERS, linestyle=':')
 
         lon_2d, lat_2d = np.meshgrid(lon_data, lat_data)
-        contour = self.ax.contourf(lon_2d, lat_2d, data_subset.mean(axis=0), cmap='Blues')
+        contour = self.ax.contourf(lon_2d, lat_2d, data_subset.mean(axis=0), cmap=self.selected_colorbar)
 
-        self.fig.colorbar(contour, ax=self.ax, shrink=0.5)
+        if self.colorbar:
+            self.colorbar.remove()
+        self.colorbar = self.fig.colorbar(contour, ax=self.ax, shrink=0.5)
 
         self.ax.set_xlabel('Longitude')
         self.ax.set_ylabel('Latitude')
